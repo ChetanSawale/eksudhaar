@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EkSudhaar — One correction, everywhere</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">🇮🇳 EkSudhaar <span class="hindi">एक सुधार</span></div>
+  <div class="tagline">One correction, everywhere.</div>
+</header>
+
+<main id="home">
+  <section class="hero">
+    <h1>Fix your name once.<br>We chase every document.</h1>
+    <p class="lede">A wrong name on Aadhaar poisons your PAN, voter ID, bank KYC and PF — each needing its own queue, its own months. EkSudhaar records your verified legal correction <strong>once</strong> and an agent propagates it across every registry, with your consent at each step.</p>
+    <div class="cta-row">
+      <button class="btn primary" id="startBtn">Start a correction</button>
+      <button class="btn ghost" id="demoBtn">Try the 2-minute demo</button>
+    </div>
+    <div class="stats">
+      <div><strong>134 cr</strong><span>Aadhaar holders affected by the same maze</span></div>
+      <div><strong>1.9 cr</strong><span>correction requests in a single month</span></div>
+      <div><strong>6</strong><span>registries handled in one pack</span></div>
+    </div>
+  </section>
+
+  <section class="how">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step"><span>1</span><h3>Record the event</h3><p>Upload your Gazette notification, marriage certificate or court order. The agent reads and verifies it.</p></div>
+      <div class="step"><span>2</span><h3>Review the plan</h3><p>See every registry that needs updating, in the right order — Aadhaar first, then PAN, banks, PF…</p></div>
+      <div class="step"><span>3</span><h3>Consent &amp; download</h3><p>You approve each registry. EkSudhaar generates your correction pack: checklists + filled letters.</p></div>
+      <div class="step"><span>4</span><h3>Track to done</h3><p>One dashboard tracks every registry from filed to completed, with nudges when one stalls.</p></div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ WIZARD ============ -->
+<main id="wizard" class="hidden">
+  <h2>New correction <button class="linkbtn" id="wizCancel">← back</button></h2>
+  <div id="wstep1">
+    <p class="muted">What changed?</p>
+    <div class="cards" id="typeCards"></div>
+  </div>
+  <div id="wstep2" class="hidden">
+    <p class="muted" id="wstep2title"></p>
+    <div class="form">
+      <label>Old name <input id="f_old_name" placeholder="e.g. Priya Sharna"></label>
+      <label>New (correct) name <input id="f_new_name" placeholder="e.g. Priya Sharma"></label>
+      <div class="row2 hidden" id="dobRow">
+        <label>Old date of birth <input id="f_old_dob" placeholder="DD/MM/YYYY"></label>
+        <label>New date of birth <input id="f_new_dob" placeholder="DD/MM/YYYY"></label>
+      </div>
+      <label class="hidden" id="addrRow">New address <textarea id="f_new_address" rows="2" placeholder="Full address with PIN code"></textarea></label>
+      <label>Supporting document (Gazette / certificate scan or photo)
+        <input type="file" id="f_doc" accept="image/*,.pdf,.txt">
+      </label>
+      <label>…or paste the document text <textarea id="f_doc_text" rows="4" placeholder="Paste Gazette notification text here"></textarea></label>
+      <label>Bank names (for KYC letters, comma-separated, optional) <input id="f_banks" placeholder="e.g. SBI, HDFC Bank"></label>
+    </div>
+    <div class="cta-row">
+      <button class="btn ghost" id="wback1">← Back</button>
+      <button class="btn primary" id="wsubmit">Verify &amp; build my plan →</button>
+    </div>
+    <p class="muted small" id="wstatus"></p>
+  </div>
+</main>
+
+<!-- ============ DASHBOARD ============ -->
+<main id="dash" class="hidden">
+  <h2 id="dashTitle">Your correction <button class="linkbtn" id="dashHome">← home</button></h2>
+
+  <section class="card" id="verifyCard">
+    <h3>🔍 Document verification</h3>
+    <div id="verifyBody"><p class="muted">Running…</p></div>
+  </section>
+
+  <section class="card">
+    <h3>🤖 Agent activity</h3>
+    <div id="agentLog" class="agentlog"></div>
+  </section>
+
+  <section class="card">
+    <h3>🗺️ Propagation plan</h3>
+    <p class="muted small">Toggle consent per registry. Registries are ordered — finish earlier ones first.</p>
+    <div id="planList"></div>
+  </section>
+
+  <section class="card">
+    <h3>📦 Correction pack</h3>
+    <p class="muted small">Checklists for every step + filled letters, in one PDF. Print it and carry it.</p>
+    <div class="cta-row"><button class="btn primary" id="packBtn">Generate my correction pack (PDF)</button></div>
+  </section>
+
+  <section class="card">
+    <h3>📍 Tracker</h3>
+    <div id="trackerList"></div>
+  </section>
+</main>
+
+<footer>EkSudhaar is a citizen aid, not a government service. Always verify details before submitting. Open source for the Code for India hackathon.</footer>
+<script src="app.js"></script>
+</body>
+</html>
