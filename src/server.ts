@@ -5,8 +5,10 @@ import { randomUUID } from "node:crypto";
 import { db, getEvent, getAgentLog, logAgent, nowIso } from "./db.js";
 import { CorrectionAgent } from "./agent/orchestrator.js";
 import { ocrImage } from "./verify/ocr.js";
-import { planFor, getRegistry, EVENT_TYPE_LABELS, type EventType } from "./registries/catalog.js";
+import { planFor, getRegistry, REGISTRIES, EVENT_TYPE_LABELS, type EventType } from "./registries/catalog.js";
 import { buildPackPdf } from "./pack/pdf.js";
+import { parseSimInput, runSimulation } from "./simulate/engine.js";
+import { DOCUMENTS, RULES, STATES } from "./laws/index.js";
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -203,6 +205,53 @@ app.get("/api/events/:id/agent-log", (req, res) => {
 
 app.get("/api/event-types", (_req, res) => {
   res.json({ types: EVENT_TYPE_LABELS });
+});
+
+/** Registry catalog with online-first paths (for badges + zero-visit plan). */
+app.get("/api/registries", (_req, res) => {
+  res.json({
+    registries: REGISTRIES.map((r) => ({
+      id: r.id,
+      name: r.name,
+      short: r.short,
+      fee: r.fee,
+      officialUrl: r.officialUrl,
+      helpline: r.helpline,
+      appliesTo: r.appliesTo,
+      online: r.online,
+    })),
+  });
+});
+
+/** Pre-filing simulator: validate an application against the rules knowledge base. */
+app.post("/api/simulate", (req, res) => {
+  try {
+    const input = parseSimInput(req.body);
+    res.json(runSimulation(input));
+  } catch (e) {
+    res.status(400).json({ error: (e as Error).message });
+  }
+});
+
+/** Simulator metadata: event types, states, documents, and the knowledge base. */
+app.get("/api/simulate/meta", (_req, res) => {
+  const sources = [...new Set(RULES.map((r) => r.sourceLabel))];
+  res.json({
+    eventTypes: EVENT_TYPE_LABELS,
+    states: STATES,
+    documents: DOCUMENTS,
+    rules: RULES.map((r) => ({
+      id: r.id,
+      label: r.label,
+      jurisdiction: r.jurisdiction,
+      sourceLabel: r.sourceLabel,
+      severity: r.severity,
+      documents: r.documents,
+      eventTypes: r.eventTypes,
+    })),
+    sourceCount: sources.length,
+    ruleCount: RULES.length,
+  });
 });
 
 app.use(express.static(path.join(process.cwd(), "public")));

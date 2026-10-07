@@ -16,6 +16,23 @@ export interface RegistryStep {
   eta: string;
 }
 
+/**
+ * Online-first path for a registry. EkSudhaar's goal: everything that CAN be
+ * done online is done from home; a physical visit happens only where the law
+ * or process genuinely requires it — and then the citizen walks in with a
+ * 100%-scored file no agent can exploit.
+ */
+export interface OnlinePath {
+  /** true when the whole correction can be completed without any visit */
+  fullyOnline: boolean;
+  /** steps the citizen can complete from home */
+  onlineSteps: string[];
+  /** true when at least one physical visit is legally/process-required */
+  mustVisit: boolean;
+  /** why the visit is required (empty when fully online) */
+  visitReason: string;
+}
+
 export interface Registry {
   id: string;
   name: string;
@@ -30,6 +47,8 @@ export interface Registry {
   letterKind: "bank_kyc" | "epfo_joint" | null;
   officialUrl: string;
   helpline: string;
+  /** online-first path: what can be done from home vs what needs a visit */
+  online: OnlinePath;
 }
 
 export const REGISTRIES: Registry[] = [
@@ -54,6 +73,16 @@ export const REGISTRIES: Registry[] = [
     letterKind: null,
     officialUrl: "https://myaadhaar.uidai.gov.in/",
     helpline: "1947 (toll-free)",
+    online: {
+      fullyOnline: false,
+      onlineSteps: [
+        "Address update can be done fully online on myAadhaar with an Aadhaar OTP — no visit needed.",
+        "Track any update with your URN on myAadhaar — no visit needed.",
+      ],
+      mustVisit: true,
+      visitReason:
+        "Name, date-of-birth, gender and mobile-number updates legally require biometric authentication (fingerprint/iris) — they cannot be done online. Only address updates are fully online.",
+    },
   },
   {
     id: "pan",
@@ -76,6 +105,16 @@ export const REGISTRIES: Registry[] = [
     letterKind: null,
     officialUrl: "https://www.protean-tinpan.com/",
     helpline: "1800-180-1961",
+    online: {
+      fullyOnline: true,
+      onlineSteps: [
+        "File the correction (Form 49A) online on Protean or UTIITSL.",
+        "Verify with Aadhaar OTP e-KYC — no documents to courier, no visit.",
+        "e-PAN arrives by email; re-link Aadhaar–PAN online if needed.",
+      ],
+      mustVisit: false,
+      visitReason: "",
+    },
   },
   {
     id: "voter",
@@ -93,6 +132,16 @@ export const REGISTRIES: Registry[] = [
     letterKind: null,
     officialUrl: "https://voters.eci.gov.in/",
     helpline: "1950 (toll-free)",
+    online: {
+      fullyOnline: true,
+      onlineSteps: [
+        "File Form 8 (correction of entries) on the voters' portal or Voter Helpline app.",
+        "Upload the Gazette / certificate and updated Aadhaar.",
+        "Track with the reference number; download e-EPIC on approval.",
+      ],
+      mustVisit: false,
+      visitReason: "",
+    },
   },
   {
     id: "bank",
@@ -114,6 +163,15 @@ export const REGISTRIES: Registry[] = [
     letterKind: "bank_kyc",
     officialUrl: "https://www.ckycindia.in/",
     helpline: "Your bank's customer care",
+    online: {
+      fullyOnline: false,
+      onlineSteps: [
+        "Some banks let you raise a CKYC update request through netbanking — check yours first.",
+      ],
+      mustVisit: true,
+      visitReason:
+        "Banks must verify you in person for KYC changes — the update is recorded at your home branch. Carry EkSudhaar's generated letter and insist on a stamped acknowledgement.",
+    },
   },
   {
     id: "epfo",
@@ -135,6 +193,16 @@ export const REGISTRIES: Registry[] = [
     letterKind: "epfo_joint",
     officialUrl: "https://unifiedportal-mem.epfindia.gov.in/",
     helpline: "1800-118-005",
+    online: {
+      fullyOnline: true,
+      onlineSteps: [
+        "Fill the joint declaration with your employer (EkSudhaar generates it).",
+        "Your employer submits it on the EPFO employer portal — no visit by you.",
+        "Track approval on the member portal; claims unblock once approved.",
+      ],
+      mustVisit: false,
+      visitReason: "",
+    },
   },
   {
     id: "passport",
@@ -152,6 +220,16 @@ export const REGISTRIES: Registry[] = [
     letterKind: null,
     officialUrl: "https://www.passportindia.gov.in/",
     helpline: "1800-258-1800",
+    online: {
+      fullyOnline: false,
+      onlineSteps: [
+        "Fill the re-issue application and pay the fee online on passportindia.gov.in.",
+        "Book your Passport Seva Kendra appointment online.",
+      ],
+      mustVisit: true,
+      visitReason:
+        "A Passport Seva Kendra visit is mandatory — originals are verified in person and police verification may be re-triggered. Everything before the visit is online.",
+    },
   },
 ];
 
